@@ -1,0 +1,7 @@
+BaseballDB
+
+All code copyright Travis Becker 2012.
+Text data files courtesy of Retrosheet (http://www.retrosheet.org)
+
+A basic database creation and maintenance program, written
+in Python.
