@@ -15,7 +15,7 @@ ALLOWED_FIELD_SUPERTYPE = ( 'string', 'numeric', 'date' )
 SHORT_TEXT_FIELD = 'VARCHAR(10)'
 MEDIUM_TEXT_FIELD = 'VARCHAR(20)'
 LONG_TEXT_FIELD = 'VARCHAR(40)'
-DATABASE_NULL = '\N'
+DATABASE_NULL = 'NULL'
 
 # DIRS: Dictionary of directories to be used.
 DIRS = {'main': '.' }

@@ -120,6 +120,7 @@ def main():
     # The data type might have more than one file.
     for j in FILES[i]:
         try:
+            file_obj = open(j, 'r')
             #print GetTimeStamp(), 'Opening %s for \'%s\' data.' % (j, i)
             for line in file_obj:
                 line = line.strip() # Remove newline character at end.
@@ -127,12 +128,14 @@ def main():
                 line_dict = {}
                 import_fields = string.split(line, ',')
                 if len(import_fields) != len(DATA_FIELDS[i]) - 1:
-                    print '%s Line format wrong: %s' % (GetTimeStamp(), line)
+                    #print '%s Line format wrong: %s' % (GetTimeStamp(), line)
+                    dummy = 1
                 else:
                     for j in range(len(import_fields)):
                         # Replace an empty string with database null character.
                         use_value = import_fields[j]
-                        if not import_fields[j]:
+                        #if not import_fields[j]:
+                        if (re.match('^\"\"$', use_value)):
                             use_value = DATABASE_NULL
 
                         # Some data files use double quotes to surround
@@ -150,21 +153,21 @@ def main():
                                 use_value = 0
                         if DATA_FIELDS[i][j].GetFieldSupertype() == 'date':
                             if not import_fields[j]:
-                                use_value = '1/1/1900'
+                                use_value = '1900-01-01'
 
                         # Special case. In the game log files, the game
                         # date is given by 'YYYYMMDD'. Need to convert this
-                        # to 'MM/DD/YYYY'.
+                        # to 'YYYY-MM-DD'.
                         if i == 'game_logs':
                             if DATA_FIELDS[i][j].GetFieldName() == 'GameDate':
-                                use_value = str(use_value[4:6]) + '/' + \
-                                            str(use_value[6:8]) + '/' + \
-                                            str(use_value[0:4])
+                                use_value = str(use_value[0:4]) + '-' + \
+                                            str(use_value[4:6]) + '-' + \
+                                            str(use_value[6:8])
 
                         line_dict[DATA_FIELDS[i][j].GetFieldName()] = use_value
                     line_record = DatabaseRecord(line_dict, i)
                     line_record.data['DateAdded'] = GetDate()
-                    print GetTimeStamp(), 'Importing', line_record.PrintSummary()
+                    #print GetTimeStamp(), 'Importing', line_record.PrintSummary()
 
                     # Export to database.
                     table_insert_string = 'INSERT INTO ' + i + ' VALUES ('
@@ -180,9 +183,10 @@ def main():
                         else:
                             print 'WARNING: Invalid field type for %s.%s.' % \
                                 (i, j.GetFieldName())
-                    table_insert_string += string.join(table_insert_list, ',') + ')'
-                    print GetTimeStamp(), 'Exporting to database'
-
+                    table_insert_string += string.join(table_insert_list, ',') + ');'
+                    #print GetTimeStamp(), 'Exporting to database'
+                    print table_insert_string
+            file_obj.close()
         except IOError:
             print 'unable to open'
 

@@ -47,7 +47,7 @@ def GetDate():
     Return a simple date string (no time value).
     """
     import time
-    return time.strftime('%m/%d/%Y', time.gmtime())
+    return time.strftime('%Y-%m-%d', time.gmtime())
 
 def OpenDataFile(data_file):
     """
