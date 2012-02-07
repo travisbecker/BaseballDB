@@ -56,6 +56,12 @@ class DatabaseField():
 
     def IsFieldNumeric(self):
         return (self.field_supertype == 'numeric')
+        
+    def SetFieldType(self, newType):
+    	  self.field_type = newType;
+    	  
+    def SetFieldSupertype(self, newSupertype):
+    	  self.field_supertype = newSupertype;
 
 
 ### Class for records, both for import from text files and export to database.

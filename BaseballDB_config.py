@@ -9,6 +9,7 @@ Set up configuration items for BaseballDB.py.
 """
 
 import glob
+import re
 from BaseballDB_const import *
 from BaseballDB_classes import *
 
@@ -164,6 +165,13 @@ DATA_FIELDS[GAMELOGS] += [
     DatabaseField(i+'Batter'+str(j)+k, MEDIUM_TEXT_FIELD, 'imported', 'string') \
     for i in team_parts for j in range(1,10) for k in id_name_and_position
     ]
+    
+# Go back and fix fields that are actually numeric (i.e., player position).
+for i in range(106,160):
+    if (re.search('TeamBatter\d+Position$', DATA_FIELDS[GAMELOGS][i-1].GetFieldName())):
+        DATA_FIELDS[GAMELOGS][i-1].SetFieldSupertype('numeric')
+        DATA_FIELDS[GAMELOGS][i-1].SetFieldType('INT')
+        
 
 DATA_FIELDS[GAMELOGS] += [
     DatabaseField('AdditionalInfo', LONG_TEXT_FIELD, 'imported', 'string'),     # Field 160

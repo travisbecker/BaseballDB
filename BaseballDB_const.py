@@ -15,7 +15,7 @@ ALLOWED_FIELD_SUPERTYPE = ( 'string', 'numeric', 'date' )
 SHORT_TEXT_FIELD = 'VARCHAR(10)'
 MEDIUM_TEXT_FIELD = 'VARCHAR(20)'
 LONG_TEXT_FIELD = 'VARCHAR(40)'
-DATABASE_NULL = ''
+DATABASE_NULL = '\N'
 
 # DIRS: Dictionary of directories to be used.
 DIRS = {'main': '.' }
@@ -57,11 +57,9 @@ REMOTE_DB_CONFIG = {
     'host'  : 'host356.hostmonster.com',
     'port'  : 3306,
     'uid'   : 'tbeckeru_bball',
-    'pw'    : 'Baseball2011',
     'db'    : 'tbeckeru_baseball'
     }
 REMOTE_DB_CONNECT_STRING = "\"DRIVER=" + REMOTE_DB_CONFIG['driver'] + \
                            ";SERVER=" + REMOTE_DB_CONFIG['host'] + \
                            ";DATABASE=" + REMOTE_DB_CONFIG['db'] + \
-                           ";UID=" + REMOTE_DB_CONFIG['uid'] + \
-                           ";PWD=" + REMOTE_DB_CONFIG['pw'] + "\""
+                           ";UID=" + REMOTE_DB_CONFIG['uid'] + "\""
