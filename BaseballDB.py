@@ -32,17 +32,17 @@ from BaseballDB_config import *
 verbose_output = False
 
 # The util directory contains useful support utilities.
-if __name__ == '__main__':
-    sys.path.insert(0, DIRS['util'])
-else:
-    sys.path.insert(0, os.path.join(os.path.split(__file__)[0], DIRS['util']))
+#if __name__ == '__main__':
+#    sys.path.insert(0, DIRS['util'])
+#else:
+#    sys.path.insert(0, os.path.join(os.path.split(__file__)[0], DIRS['util']))
 from BaseballDB_util import *
 
 # The engine directory contains the main import and export routines.
-if __name__ == '__main__':
-    sys.path.insert(0, DIRS['engine'])
-else:
-    sys.path.insert(0, os.path.join(os.path.split(__file__)[0], DIRS['engine']))
+#if __name__ == '__main__':
+#    sys.path.insert(0, DIRS['engine'])
+#else:
+#    sys.path.insert(0, os.path.join(os.path.split(__file__)[0], DIRS['engine']))
 
 def PrintHelp():
     """
@@ -115,7 +115,7 @@ def main():
     PrintConfigData()
 
     # Connect to database
-    cnxn = pyodbc.connect("Driver={Microsoft Access Driver (*.mdb)};Dbq=BaseballDB.mdb")
+    cnxn = pyodbc.connect(REMOTE_DB_CONNECT_STRING)
     cursor = cnxn.cursor()
 
     # Import the data files.
@@ -144,13 +144,13 @@ def main():
             print table_create_string
             #try:
             cursor.execute(table_create_string)
-            cnxn.commit()
+            #cnxn.commit()
             #except:
             #    print 'Unable to create table ' + i
 
         # Testing: delete the data in the table to start from scratch.
-        cursor.execute("delete * from " + i)
-        cnxn.commit()
+        cursor.execute("delete from " + i)
+        #cnxn.commit()
         
         # The data type might have more than one file.
         for j in FILES[i]:
@@ -173,7 +173,7 @@ def main():
 
                             # Some data files use double quotes to surround
                             # fields. Remove them if they exist.
-                            quoted = re.match(r"^\"(.*)\"$", use_value)
+                            quoted = re.match(r'^\"(.*)\"$', use_value)
                             if quoted:
                                 use_value = quoted.group(1)
 
@@ -186,21 +186,21 @@ def main():
                                     use_value = 0
                             if DATA_FIELDS[i][j].GetFieldSupertype() == 'date':
                                 if not import_fields[j]:
-                                    use_value = '1/1/1900'
+                                    use_value = '1900-01-01'
 
                             # Special case. In the game log files, the game
                             # date is given by 'YYYYMMDD'. Need to convert this
-                            # to 'MM/DD/YYYY'.
+                            # to 'YYYY-MM-DD'.
                             if i == 'game_logs':
                                 if DATA_FIELDS[i][j].GetFieldName() == 'GameDate':
-                                    use_value = str(use_value[4:6]) + '/' + \
-                                                str(use_value[6:8]) + '/' + \
-                                                str(use_value[0:4])
+                                    use_value = str(use_value[0:4]) + '-' + \
+                                                str(use_value[4:6]) + '-' + \
+                                                str(use_value[6:8])
 
                             line_dict[DATA_FIELDS[i][j].GetFieldName()] = use_value
                         line_record = DatabaseRecord(line_dict, i)
                         line_record.data['DateAdded'] = GetDate()
-                        print GetTimeStamp(), 'Importing', line_record.PrintSummary()
+                        #print GetTimeStamp(), 'Importing', line_record.PrintSummary()
 
                         # Export to database.
                         table_insert_string = 'INSERT INTO ' + i + ' VALUES ('
@@ -217,9 +217,9 @@ def main():
                                 print 'WARNING: Invalid field type for %s.%s.' % \
                                     (i, j.GetFieldName())
                         table_insert_string += string.join(table_insert_list, ',') + ')'
-                        print GetTimeStamp(), 'Exporting to database'
+                        #print GetTimeStamp(), 'Exporting to database'
                         cursor.execute(table_insert_string)
-                        cnxn.commit()
+                        #cnxn.commit()
 
                 file_obj.close()
             except IOError:

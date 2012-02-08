@@ -52,14 +52,4 @@ DB_CONNECT_STRING = "\"DRIVER=" + LOCAL_DB_CONFIG['driver'] + \
                     ";DBQ=" + LOCAL_DB_CONFIG['file'] + "\""
 
 # Remote database (eventual home).
-REMOTE_DB_CONFIG = {
-    'driver': '{MySQL}',
-    'host'  : 'host356.hostmonster.com',
-    'port'  : 3306,
-    'uid'   : 'tbeckeru_bball',
-    'db'    : 'tbeckeru_baseball'
-    }
-REMOTE_DB_CONNECT_STRING = "\"DRIVER=" + REMOTE_DB_CONFIG['driver'] + \
-                           ";SERVER=" + REMOTE_DB_CONFIG['host'] + \
-                           ";DATABASE=" + REMOTE_DB_CONFIG['db'] + \
-                           ";UID=" + REMOTE_DB_CONFIG['uid'] + "\""
+REMOTE_DB_CONNECT_STRING = "DSN=BaseballDB"
