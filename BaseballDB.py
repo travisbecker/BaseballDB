@@ -197,6 +197,15 @@ def main():
                                                 str(use_value[4:6]) + '-' + \
                                                 str(use_value[6:8])
 
+                            # Special case. In the Retro_ID file, the debut column
+                            # is a date given in M/D/YYYY. Need to convert this
+                            # to 'YYYY-MM-DD'.
+                            if i == PEOPLE:
+                                if DATA_FIELDS[i][j].GetFieldName() == 'Debut':
+                                    if use_value != '1900-01-01':
+	                                    date_fields = string.split(use_value, '/')
+	                                    use_value = '%4d-%02d-%02d' % (int(date_fields[2]),
+	                                        int(date_fields[0]), int(date_fields[1]))
                             line_dict[DATA_FIELDS[i][j].GetFieldName()] = use_value
                         line_record = DatabaseRecord(line_dict, i)
                         line_record.data['DateAdded'] = GetDate()
