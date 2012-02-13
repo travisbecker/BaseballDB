@@ -197,11 +197,11 @@ def main():
                                                 str(use_value[4:6]) + '-' + \
                                                 str(use_value[6:8])
 
-                            # Special case. In the Retro_ID file, the debut column
-                            # is a date given in M/D/YYYY. Need to convert this
+                            # Special case. In the people and ballparks files, the dates
+                            # are given in M/D/YYYY or MM/DD/YYYY. Need to convert these
                             # to 'YYYY-MM-DD'.
-                            if i == PEOPLE:
-                                if DATA_FIELDS[i][j].GetFieldName() == 'Debut':
+                            if i == PEOPLE or i == BALLPARKS:
+                                if DATA_FIELDS[i][j].GetFieldSupertype() == 'date':
                                     if use_value != '1900-01-01':
 	                                    date_fields = string.split(use_value, '/')
 	                                    use_value = '%4d-%02d-%02d' % (int(date_fields[2]),
