@@ -169,8 +169,6 @@ def main():
                         for j in range(len(import_fields)):
                             # Replace an empty string with database null character.
                             use_value = import_fields[j]
-                            #if not import_fields[j]:
-                            #    use_value = DATABASE_NULL
 
                             # Some data files use double quotes to surround
                             # fields. Remove them if they exist.
