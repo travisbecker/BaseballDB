@@ -129,18 +129,19 @@ def main():
             table_create_string = 'CREATE TABLE ' + i + '('
             table_create_list = []
             for j in DATA_FIELDS[i]:
-                data_field_supertype = j.GetFieldSupertype()
-                if   data_field_supertype == 'string' :
-                    db_field_type = 'TEXT'
-                elif data_field_supertype == 'numeric':
-                    db_field_type = 'NUMBER'
-                elif data_field_supertype == 'date'   :
-                    db_field_type = 'DATE'
-                else:
-                    print 'WARNING: Invalid field type for %s.%s.' % \
-                          (i, j.GetFieldName())
-                table_create_list += [j.GetFieldName() + ' ' + db_field_type]
-            table_create_string += string.join(table_create_list, ',') + ')'
+                #data_field_supertype = j.GetFieldSupertype()
+                #if   data_field_supertype == 'string' :
+                #    db_field_type = 'TEXT'
+                #elif data_field_supertype == 'numeric':
+                #    db_field_type = 'NUMBER'
+                #elif data_field_supertype == 'date'   :
+                #    db_field_type = 'DATE'
+                #else:
+                #    print 'WARNING: Invalid field type for %s.%s.' % \
+                #          (i, j.GetFieldName())
+                table_create_list += [j.GetFieldName() + ' ' + j.GetFieldType()]
+            table_create_string += string.join(table_create_list, ',')
+            table_create_string += ',PRIMARY KEY(' + DBID.GetFieldName() + '))'
             print table_create_string
             #try:
             cursor.execute(table_create_string)
@@ -162,14 +163,14 @@ def main():
                     line = string.replace(line, "'", "")
                     line_dict = {}
                     import_fields = string.split(line, ',')
-                    if len(import_fields) != len(DATA_FIELDS[i]) - 1:
+                    if len(import_fields) != len(DATA_FIELDS[i])-2:
                         print '%s Line format wrong: %s' % (GetTimeStamp(), line)
                     else:
                         for j in range(len(import_fields)):
                             # Replace an empty string with database null character.
                             use_value = import_fields[j]
-                            if not import_fields[j]:
-                                use_value = DATABASE_NULL
+                            #if not import_fields[j]:
+                            #    use_value = DATABASE_NULL
 
                             # Some data files use double quotes to surround
                             # fields. Remove them if they exist.
@@ -179,20 +180,20 @@ def main():
 
                             # If the imported field is numeric, convert to integer.
                             # (Assume no floating point fields are needed in this program.)
-                            if DATA_FIELDS[i][j].IsFieldNumeric():
+                            if DATA_FIELDS[i][j+1].IsFieldNumeric():
                                 if import_fields[j]:
                                     use_value = int(use_value)
                                 else:
                                     use_value = 0
-                            if DATA_FIELDS[i][j].GetFieldSupertype() == 'date':
+                            if DATA_FIELDS[i][j+1].GetFieldSupertype() == 'date':
                                 if not import_fields[j]:
-                                    use_value = '1900-01-01'
+                                    use_value = '0000-01-01'
 
                             # Special case. In the game log files, the game
                             # date is given by 'YYYYMMDD'. Need to convert this
                             # to 'YYYY-MM-DD'.
                             if i == 'game_logs':
-                                if DATA_FIELDS[i][j].GetFieldName() == 'GameDate':
+                                if DATA_FIELDS[i][j+1].GetFieldName() == 'GameDate':
                                     use_value = str(use_value[0:4]) + '-' + \
                                                 str(use_value[4:6]) + '-' + \
                                                 str(use_value[6:8])
@@ -201,18 +202,23 @@ def main():
                             # are given in M/D/YYYY or MM/DD/YYYY. Need to convert these
                             # to 'YYYY-MM-DD'.
                             if i == PEOPLE or i == BALLPARKS:
-                                if DATA_FIELDS[i][j].GetFieldSupertype() == 'date':
-                                    if use_value != '1900-01-01':
+                                if DATA_FIELDS[i][j+1].GetFieldSupertype() == 'date':
+                                    if use_value != '0000-01-01':
 	                                    date_fields = string.split(use_value, '/')
 	                                    use_value = '%4d-%02d-%02d' % (int(date_fields[2]),
 	                                        int(date_fields[0]), int(date_fields[1]))
-                            line_dict[DATA_FIELDS[i][j].GetFieldName()] = use_value
+                            line_dict[DATA_FIELDS[i][j+1].GetFieldName()] = use_value
                         line_record = DatabaseRecord(line_dict, i)
                         line_record.data['DateAdded'] = GetDate()
                         #print GetTimeStamp(), 'Importing', line_record.PrintSummary()
 
                         # Export to database.
-                        table_insert_string = 'INSERT INTO ' + i + ' VALUES ('
+                        table_insert_string = 'INSERT INTO ' + i + '('
+                        for k in DATA_FIELDS[i]:
+                            if k.GetFieldSupertype() != 'primary_key':
+                                table_insert_string += "`" + k.GetFieldName() + "`,"
+                        table_insert_string = table_insert_string[:-1]	# Remove last comma.
+                        table_insert_string += ') VALUES ('
                         table_insert_list = []
                         for k in DATA_FIELDS[i]:
                             data_field_supertype = k.GetFieldSupertype()
@@ -222,11 +228,12 @@ def main():
                                 table_insert_list += [str(line_record.data[k.GetFieldName()])]
                             elif data_field_supertype == 'date'   :
                                 table_insert_list += ["'" + line_record.data[k.GetFieldName()] + "'"]
-                            else:
+                            elif data_field_supertype != 'primary_key':
                                 print 'WARNING: Invalid field type for %s.%s.' % \
                                     (i, j.GetFieldName())
                         table_insert_string += string.join(table_insert_list, ',') + ')'
                         #print GetTimeStamp(), 'Exporting to database'
+                        #print table_insert_string
                         cursor.execute(table_insert_string)
                         #cnxn.commit()
 

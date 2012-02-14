@@ -13,6 +13,8 @@ import re
 from BaseballDB_const import *
 from BaseballDB_classes import *
 
+DBID                = DatabaseField('DBID', 'INT NOT NULL AUTO_INCREMENT', 'created', 'primary_key')
+
 # Connect each data type to an associated database field for Person.
 PERSON_LAST_NAME    = DatabaseField('LastName', MEDIUM_TEXT_FIELD, 'imported', 'string')
 PERSON_FIRST_NAME   = DatabaseField('FirstName', MEDIUM_TEXT_FIELD, 'imported', 'string')
@@ -57,13 +59,13 @@ FILES = {
 # data_fields: Dictionary of tuples for each data type.
 # This defines the order of the fields in the input data file.
 DATA_FIELDS = {
-    PEOPLE: (PERSON_LAST_NAME, PERSON_FIRST_NAME, PERSON_RETRO_ID,
+    PEOPLE: (DBID, PERSON_LAST_NAME, PERSON_FIRST_NAME, PERSON_RETRO_ID,
              PERSON_DEBUT, PERSON_DATE_ADDED),
-    BALLPARKS: (BALLPARK_PARKID, BALLPARK_NAME, BALLPARK_AKA,
+    BALLPARKS: (DBID, BALLPARK_PARKID, BALLPARK_NAME, BALLPARK_AKA,
                 BALLPARK_CITY, BALLPARK_STATE, BALLPARK_START,
                 BALLPARK_END, BALLPARK_LEAGUE, BALLPARK_NOTES,
                 BALLPARK_DATE_ADDED),
-    FRANCHISES: (FRANCHISE_ABBR, FRANCHISE_LEAGUE, FRANCHISE_CITY,
+    FRANCHISES: (DBID, FRANCHISE_ABBR, FRANCHISE_LEAGUE, FRANCHISE_CITY,
                  FRANCHISE_NICKNAME, FRANCHISE_START_YEAR,
                  FRANCHISE_END_YEAR, FRANCHISE_DATE_ADDED)
     }
@@ -88,6 +90,7 @@ id_name_and_position = ('ID', 'Name', 'Position')
 
 # Need to use a list rather than a tuple in order to add indivudal or multiple fields.
 DATA_FIELDS[GAMELOGS] = [
+    DBID,
     DatabaseField('GameDate', 'DATE', 'imported', 'date'),            # Field 1
     DatabaseField('GameNumber', 'VARCHAR(1)', 'imported', 'numeric'), # Field 2
     DatabaseField('DayOfWeek', 'VARCHAR(3)', 'imported', 'string')    # Field 3

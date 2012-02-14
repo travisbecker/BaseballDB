@@ -11,7 +11,7 @@ Universal constants for Baseball Database.
 import os
 
 ALLOWED_FIELD_SOURCE = ( 'imported', 'created' )
-ALLOWED_FIELD_SUPERTYPE = ( 'string', 'numeric', 'date' )
+ALLOWED_FIELD_SUPERTYPE = ( 'string', 'numeric', 'date', 'primary_key' )
 SHORT_TEXT_FIELD = 'VARCHAR(10)'
 MEDIUM_TEXT_FIELD = 'VARCHAR(20)'
 LONG_TEXT_FIELD = 'VARCHAR(40)'
